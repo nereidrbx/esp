@@ -204,6 +204,8 @@ function boxBase:Update()
         return self:Remove()
     end
 
+    print(self)
+
     ESP:UpdateHealthBar(self) -- Corrected call to ESP:UpdateHealthBar
 
     
