@@ -142,8 +142,7 @@ function boxBase:Remove()
 end
 
 function boxBase:Update()
-    if not self.PrimaryPart then
-        --warn("not supposed to print", self.Object)
+    if not self.PrimaryPart or not self.Object:IsA("Model") then -- Add a check for self.Object:IsA("Model")
         return self:Remove()
     end
 
@@ -337,23 +336,26 @@ end
 
 local function CharAdded(char)
     local p = plrs:GetPlayerFromCharacter(char)
-    local humanoid = char:FindFirstChildOfClass("Humanoid")
-
-    if humanoid then
-        -- Check if the character has a LowerTorso but it's not a part of "Pants"
-        local lowerTorso = char:FindFirstChild("LowerTorso")
-        local pants = char:FindFirstChild("Pants")
-        if lowerTorso and (not pants or not pants:IsA("Pants")) then
-            ESP:Add(char, {
-                Name = p.Name,
-                Player = p,
-                PrimaryPart = humanoid.RootPart
-            })
-        end
+    if not char:FindFirstChild("HumanoidRootPart") then
+        local ev
+        ev = char.ChildAdded:Connect(function(c)
+            if c.Name == "HumanoidRootPart" then
+                ev:Disconnect()
+                ESP:Add(char, {
+                    Name = p.Name,
+                    Player = p,
+                    PrimaryPart = c
+                })
+            end
+        end)
+    else
+        ESP:Add(char, {
+            Name = p.Name,
+            Player = p,
+            PrimaryPart = char.HumanoidRootPart
+        })
     end
 end
-
-
 local function PlayerAdded(p)
     p.CharacterAdded:Connect(CharAdded)
     if p.Character then
