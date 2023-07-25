@@ -12,6 +12,11 @@ local ESP = {
     AttachShift = 1,
     TeamMates = true,
     Players = true,
+
+    HealthBar = true,
+    HealthBarHeight = 2,
+    HealthBarWidth = 30,
+    HealthBarOffset = Vector3.new(0, -3, 0), -- Offset from the center of the object
     
     Objects = setmetatable({}, {__mode="kv"}),
     Overrides = {}
@@ -141,11 +146,48 @@ function boxBase:Remove()
     end
 end
 
+function ESP:GetHealth(obj)
+    local ov = self.Overrides.GetHealth
+    if ov then
+        return ov(obj)
+    end
+
+    local humanoid = obj:FindFirstChildOfClass("Humanoid")
+    return humanoid and humanoid.Health or nil
+end
+
+function ESP:UpdateHealthBar(box)
+    if not self.HealthBar then
+        return
+    end
+
+    local health = self:GetHealth(box.Object)
+    if not health then
+        box.Components.HealthBar.Visible = false
+        return
+    end
+
+    local cf = box.PrimaryPart.CFrame
+    local healthPercent = health / box.Object.MaxHealth
+    local healthBarSize = Vector2.new(self.HealthBarWidth, self.HealthBarHeight)
+
+    local healthBarPos, onScreen = WorldToViewportPoint(cam, cf.p + self.HealthBarOffset)
+    if not onScreen then
+        box.Components.HealthBar.Visible = false
+        return
+    end
+
+    box.Components.HealthBar.Visible = true
+    box.Components.HealthBar.Size = healthBarSize
+    box.Components.HealthBar.Position = Vector2.new(healthBarPos.X - healthBarSize.X / 2, healthBarPos.Y)
+    box.Components.HealthBar.Color = Color3.new(1 - healthPercent, healthPercent, 0)
+end
+
 function boxBase:Update()
     if not self.PrimaryPart or not self.Object:IsA("Model") then -- Add a check for self.Object:IsA("Model")
         return self:Remove()
     end
-
+    self:UpdateHealthBar() -- Add this line to update the health bar
     local color
     if ESP.Highlighted == self.Object then
        color = ESP.HighlightColor
@@ -309,6 +351,15 @@ function ESP:Add(obj, options)
         Transparency = 1,
         Visible = self.Enabled and self.Tracers
     })
+    
+    box.Components["HealthBar"] = Draw("Quad", {
+        Thickness = ESP.Thickness,
+        Color = Color3.new(1, 0, 0), -- Default red color for health bar
+        Filled = true,
+        Transparency = 0.5,
+        Visible = ESP.Enabled and ESP.HealthBar
+    })
+
     self.Objects[obj] = box
     
     obj.AncestryChanged:Connect(function(_, parent)
@@ -356,6 +407,8 @@ local function CharAdded(char)
         })
     end
 end
+
+
 local function PlayerAdded(p)
     p.CharacterAdded:Connect(CharAdded)
     if p.Character then
