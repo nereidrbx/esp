@@ -158,7 +158,7 @@ function ESP:GetHealth(obj)
 end
 
 function ESP:UpdateHealthBar(box)
-    print("called")
+    print("called")--
     if not self.HealthBar then
         return
     end
