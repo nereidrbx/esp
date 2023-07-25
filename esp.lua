@@ -162,8 +162,7 @@ end
 
 
 function ESP:UpdateHealthBar(box)
-    print(box)
-    print(box.Object)
+    print("called")
     if not self.HealthBar then
         return
     end
