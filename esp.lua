@@ -162,12 +162,12 @@ end
 
 
 function ESP:UpdateHealthBar(box)
+    print(box)
+    print(box.Object)
     if not self.HealthBar then
         return
     end
 
-    print(box)
-    print(box.Object)
     local humanoid = box.Object:FindFirstChildOfClass("Humanoid")
     if not humanoid then
         box.Components.HealthBar.Visible = false
