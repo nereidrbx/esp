@@ -151,15 +151,10 @@ function ESP:GetHealth(obj)
     if ov then
         return ov(obj)
     end
-    print(obj)
+
     local humanoid = obj:FindFirstChildOfClass("Humanoid")
-    if humanoid then
-        return humanoid.Health, humanoid.MaxHealth
-    end
-
-    return nil
+    return humanoid and humanoid.Health or nil
 end
-
 
 function ESP:UpdateHealthBar(box)
     print("called")
@@ -167,21 +162,14 @@ function ESP:UpdateHealthBar(box)
         return
     end
 
-    local humanoid = box.Object:FindFirstChildOfClass("Humanoid")
-    if not humanoid then
+    local health = self:GetHealth(box.Object)
+    if not health then
         box.Components.HealthBar.Visible = false
         return
     end
-
-    local health, maxHealth = humanoid.Health, humanoid.MaxHealth
-    if not health or not maxHealth or maxHealth <= 0 then
-        box.Components.HealthBar.Visible = false
-        return
-    end
-
-    local healthPercent = health / maxHealth
 
     local cf = box.PrimaryPart.CFrame
+    local healthPercent = health / box.Object.MaxHealth
     local healthBarSize = Vector2.new(self.HealthBarWidth, self.HealthBarHeight)
 
     local healthBarPos, onScreen = WorldToViewportPoint(cam, cf.p + self.HealthBarOffset)
@@ -196,16 +184,11 @@ function ESP:UpdateHealthBar(box)
     box.Components.HealthBar.Color = Color3.new(1 - healthPercent, healthPercent, 0)
 end
 
-
-
 function boxBase:Update()
-    if not self.PrimaryPart or not self.Object:IsA("Model") then
+    if not self.PrimaryPart or not self.Object:IsA("Model") then -- Add a check for self.Object:IsA("Model")
         return self:Remove()
     end
-
-
-    ESP:UpdateHealthBar(self) -- Corrected call to ESP:UpdateHealthBars
-
+    ESP:UpdateHealthBar(self) -- Corrected call to ESP:UpdateHealthBar
     
     local color
     if ESP.Highlighted == self.Object then
