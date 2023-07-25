@@ -204,7 +204,7 @@ function boxBase:Update()
     end
 
 
-    ESP:UpdateHealthBar(self) -- Corrected call to ESP:UpdateHealthBar
+    ESP:UpdateHealthBar(self) -- Corrected call to ESP:UpdateHealthBars
 
     
     local color
