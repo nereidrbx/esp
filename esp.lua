@@ -151,9 +151,8 @@ function ESP:GetHealth(obj)
     if ov then
         return ov(obj)
     end
-
-    local humanoid = obj:FindFirstChildOfClass("Humanoid")
     print(obj)
+    local humanoid = obj:FindFirstChildOfClass("Humanoid")
     if humanoid then
         return humanoid.Health, humanoid.MaxHealth
     end
