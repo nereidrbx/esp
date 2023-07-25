@@ -203,11 +203,7 @@ function boxBase:Update()
         return self:Remove()
     end
 
-    for i, box in pairs(self.Objects) do
-        print(box)            -- Print the box
-        print(box.Object)      -- Print the box's object
-        -- ... (rest of the code)
-    end
+
     ESP:UpdateHealthBar(self) -- Corrected call to ESP:UpdateHealthBar
 
     
