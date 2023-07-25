@@ -152,6 +152,7 @@ function ESP:GetHealth(obj)
         return ov(obj)
     end
 
+    print(obj)
     local humanoid = obj:FindFirstChildOfClass("Humanoid")
     return humanoid and humanoid.Health or nil
 end
