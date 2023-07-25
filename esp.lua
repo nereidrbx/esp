@@ -153,22 +153,29 @@ function ESP:GetHealth(obj)
     end
 
     local humanoid = obj:FindFirstChildOfClass("Humanoid")
-    return humanoid and humanoid.Health or nil
+    if humanoid then
+        return humanoid.Health, humanoid.MaxHealth
+    end
+
+    return nil
 end
+
 
 function ESP:UpdateHealthBar(box)
     if not self.HealthBar then
         return
     end
 
-    local health = self:GetHealth(box.Object)
-    if not health then
+    local health, maxHealth = self:GetHealth(box.Object)
+    if not health or not maxHealth then
         box.Components.HealthBar.Visible = false
         return
     end
 
+    local healthPercent = health / maxHealth
+
     local cf = box.PrimaryPart.CFrame
-    local healthPercent = health / box.Object.MaxHealth
+    local healthPercent = health / maxHealth
     local healthBarSize = Vector2.new(self.HealthBarWidth, self.HealthBarHeight)
 
     local healthBarPos, onScreen = WorldToViewportPoint(cam, cf.p + self.HealthBarOffset)
