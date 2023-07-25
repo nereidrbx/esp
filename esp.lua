@@ -340,13 +340,19 @@ local function CharAdded(char)
     local humanoid = char:FindFirstChildOfClass("Humanoid")
 
     if humanoid then
-        ESP:Add(char, {
-            Name = p.Name,
-            Player = p,
-            PrimaryPart = humanoid.RootPart
-        })
+        -- Check if the character has a LowerTorso but it's not a part of "Pants"
+        local lowerTorso = char:FindFirstChild("LowerTorso")
+        local pants = char:FindFirstChild("Pants")
+        if lowerTorso and (not pants or not pants:IsA("Pants")) then
+            ESP:Add(char, {
+                Name = p.Name,
+                Player = p,
+                PrimaryPart = humanoid.RootPart
+            })
+        end
     end
 end
+
 
 local function PlayerAdded(p)
     p.CharacterAdded:Connect(CharAdded)
