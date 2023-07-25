@@ -187,7 +187,8 @@ function boxBase:Update()
     if not self.PrimaryPart or not self.Object:IsA("Model") then -- Add a check for self.Object:IsA("Model")
         return self:Remove()
     end
-    self:UpdateHealthBar(self)
+    ESP:UpdateHealthBar(self) -- Corrected call to ESP:UpdateHealthBar
+    
     local color
     if ESP.Highlighted == self.Object then
         color = ESP.HighlightColor
