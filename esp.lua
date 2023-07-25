@@ -174,7 +174,7 @@ function ESP:UpdateHealthBar(box)
     end
 
     local health, maxHealth = humanoid.Health, humanoid.MaxHealth
-    if not health or not maxHealth then
+    if not health or not maxHealth or maxHealth <= 0 then
         box.Components.HealthBar.Visible = false
         return
     end
@@ -195,6 +195,7 @@ function ESP:UpdateHealthBar(box)
     box.Components.HealthBar.Position = Vector2.new(healthBarPos.X - healthBarSize.X / 2, healthBarPos.Y)
     box.Components.HealthBar.Color = Color3.new(1 - healthPercent, healthPercent, 0)
 end
+
 
 
 function boxBase:Update()
