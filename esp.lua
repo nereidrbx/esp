@@ -337,26 +337,17 @@ end
 
 local function CharAdded(char)
     local p = plrs:GetPlayerFromCharacter(char)
-    if not char:FindFirstChild("HumanoidRootPart") then
-        local ev
-        ev = char.ChildAdded:Connect(function(c)
-            if c.Name == "HumanoidRootPart" then
-                ev:Disconnect()
-                ESP:Add(char, {
-                    Name = p.Name,
-                    Player = p,
-                    PrimaryPart = c
-                })
-            end
-        end)
-    else
+    local humanoid = char:FindFirstChildOfClass("Humanoid")
+
+    if humanoid then
         ESP:Add(char, {
             Name = p.Name,
             Player = p,
-            PrimaryPart = char.HumanoidRootPart
+            PrimaryPart = humanoid.RootPart
         })
     end
 end
+
 local function PlayerAdded(p)
     p.CharacterAdded:Connect(CharAdded)
     if p.Character then
